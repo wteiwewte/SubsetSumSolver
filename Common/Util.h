@@ -12,7 +12,7 @@ template<typename T>
 T getPowerOf2GreaterThan(T atleast)
 {
     T temp = 1;
-    while( temp <= atleast )
+    while(temp < atleast)
         temp <<= 1;
     return temp;
 }
@@ -20,7 +20,7 @@ T getPowerOf2GreaterThan(T atleast)
 template<typename T>
 T fast_exp(T base, T exp, T modulo)
 {
-    static_assert(std::is_integral_v<T>, "T is not integral!");
+//    static_assert(std::is_integral_v<T>, "T is not integral!");
     if(exp == 0)
         return 1;
 
@@ -39,7 +39,7 @@ T fast_exp(T base, T exp, T modulo)
 template<typename T>
 T fast_exp(T base, T exp)
 {
-    static_assert(std::is_integral_v<T>, "T is not integral!");
+//    static_assert(std::is_integral_v<T>, "T is not integral!");
     if(exp == 0)
         return 1;
 

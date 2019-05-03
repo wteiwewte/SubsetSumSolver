@@ -2,7 +2,7 @@
 // Created by jan on 07.04.19.
 //
 
-#include "ConstantsAndTypes.h"
+#include "Common/ConstantsAndTypes.h"
 #include "SubsetSumSolver.h"
 
 template<typename T>
@@ -27,12 +27,6 @@ template<typename T>
 void SubsetSumSolver<T>::solve()
 {
     _impl->solve();
-}
-
-template<typename T>
-bool SubsetSumSolver<T>::verify() const
-{
-    _impl->verify();
 }
 
 template<typename T>

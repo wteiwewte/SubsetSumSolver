@@ -3,7 +3,7 @@
 //
 
 #include "PrimeDecider.h"
-#include "Util.h"
+#include "Common/Util.h"
 
 #include <iostream>
 #include <algorithm>
@@ -17,7 +17,7 @@ std::pair<T, T> PrimeDecider<T>::decouple(T x)
     {
         powerOf2 *= 2;
         x /= 2;
-        i++;
+        ++i;
     }
     return {x, i};
 }

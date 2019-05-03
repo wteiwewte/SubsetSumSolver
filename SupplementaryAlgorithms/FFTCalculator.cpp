@@ -2,13 +2,13 @@
 // Created by jan on 07.04.19.
 //
 
-#include "FFTSolver.h"
-#include "Util.h"
+#include "FFTCalculator.h"
+#include "Common/Util.h"
 
 #include <algorithm>
 
 template<typename T>
-void FFTSolver<T>::multiply(const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &result)
+void FFTCalculator<T>::multiply(const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &result)
 {
     T max_len = getPowerOf2GreaterThan(static_cast<T>(a.size() + b.size()));
     for(std::size_t i = 0 ; i < max_len ; ++i ) {
@@ -33,13 +33,13 @@ void FFTSolver<T>::multiply(const std::vector<T> &a, const std::vector<T> &b, st
     T sum_lens = static_cast<T>(a.size() + b.size());
     result.resize(sum_lens - 1);
     for(std::size_t i = 0 ; i < sum_lens - 1; ++i )
-        result[i] = round(C[i].real());
+        result[i] = round((double) C[i].real());
 }
 
 template<typename T>
-void FFTSolver<T>::divide(std::complex<double> *tab, T size)
+void FFTCalculator<T>::divide(std::complex<FloatingType> *tab, T size)
 {
-    auto* odd_elements = new std::complex<double>[size/2];
+    auto* odd_elements = new std::complex<FloatingType>[size/2];
     for(std::size_t i = 0; i < size/2; i++)
         odd_elements[i] = tab[i*2 + 1];
     for(std::size_t i = 0; i < size/2; i++)
@@ -50,11 +50,13 @@ void FFTSolver<T>::divide(std::complex<double> *tab, T size)
 }
 
 template<typename T>
-void FFTSolver<T>::fft(std::complex<double> *tab, T size)
+void FFTCalculator<T>::fft(std::complex<FloatingType> *tab, T size)
 {
     if( size < 2 ) return;
-    auto w_n =  exp(std::complex<double>(0.0, 2.0* PI/size));
-    auto exponent  = std::complex<double>(1.0, 0.0);
+    auto w_n =  exp(std::complex<FloatingType>(0.0, 2.0* PI/size));
+//    boost::multiprecision::e
+//    auto w_n =  boost::multiprecision::exp(std::complex<FloatingType>(0.0, 2.0* PI/size));
+    auto exponent  = std::complex<FloatingType>(1.0, 0.0);
     divide(tab, size);
     fft(tab, size/2);
     fft(tab + size/2, size/2);
@@ -67,19 +69,19 @@ void FFTSolver<T>::fft(std::complex<double> *tab, T size)
 }
 
 template<typename T>
-void FFTSolver<T>::ifft(std::complex<double> *tab, T size)
+void FFTCalculator<T>::ifft(std::complex<FloatingType> *tab, T size)
 {
-    transform(tab, tab+size, tab, [](std::complex<double> const& c){
+    transform(tab, tab+size, tab, [](std::complex<FloatingType> const& c){
         return conj(c);
     } );
 
     fft(tab, size);
 
-    transform(tab, tab+size, tab, [&](std::complex<double> const& c){
+    transform(tab, tab+size, tab, [&](std::complex<FloatingType> const& c){
         auto conj_c = conj(c);
         conj_c /= size;
         return conj_c;
     } );
 }
 
-template class FFTSolver<Int>;
+template class FFTCalculator<Int>;

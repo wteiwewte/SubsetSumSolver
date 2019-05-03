@@ -5,7 +5,7 @@
 #ifndef SUBSET_SUM_SOLVER_PRIMER_H
 #define SUBSET_SUM_SOLVER_PRIMER_H
 
-#include "ConstantsAndTypes.h"
+#include "Common/ConstantsAndTypes.h"
 
 #include <array>
 #include <type_traits>
@@ -19,7 +19,7 @@ class PrimeDecider {
 
 public:
     PrimeDecider<T> () {
-        static_assert(std::is_integral_v<T>, "T isn't integral type!");
+//        static_assert(std::is_integral_v<T>, "T isn't integral type!");
     }
     static bool isPrime(T x);
 private:

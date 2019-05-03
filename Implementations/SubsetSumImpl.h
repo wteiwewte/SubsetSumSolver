@@ -21,14 +21,16 @@ template<typename T>
 class SubsetSumImpl
 {
 public:
-    bool verify() const;
+    SubsetSumImpl() = default;
+    SubsetSumImpl(const SubsetSumImpl<T>& otherImpl);
     virtual void solve() = 0;
     virtual ~SubsetSumImpl() {};
     bool result() const { return _result; }
 protected:
     std::vector<T> _tab;
     T _target;
-    std::make_unsigned_t<T> _size;
+//    std::make_unsigned_t<T> _size;
+    std::size_t _size;
     bool _result = false;
 private:
     virtual void init() = 0;

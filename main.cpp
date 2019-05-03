@@ -1,8 +1,9 @@
-#include "ConstantsAndTypes.h"
-#include "DummyImplementation.h"
-#include "PrimeDecider.h"
+#include "Common/ConstantsAndTypes.h"
+#include "Implementations/DynamicProgrammingImpl.h"
+#include "Implementations/MainImpl.h"
+#include "SupplementaryAlgorithms/PrimeDecider.h"
 #include "SubsetSumSolver.h"
-#include "Util.h"
+#include "Common/Util.h"
 
 #include <iostream>
 #include <functional>
@@ -21,19 +22,23 @@ int main() {
 
     while( z-- )
     {
-        SubsetSumSolver<Int> ssSolver(std::make_unique<DummyImplementation<Int>>());
-        auto readingInputTime = executeAndMeasureTime([&ssSolver] { std::cin >> ssSolver; });
+//        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER>>());
+        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD>>());
 
-        auto solvingTime = executeAndMeasureTime([&ssSolver]{ ssSolver.solve(); });
+        std::cin >> ssSolverMainAlgorithm;
 
-        auto [isCorrect, verifyingTime] = executeAndMeasureTime([&ssSolver]{ return ssSolver.verify(); });
+        SubsetSumSolver<Int> ssSolverDpAlgorithm(std::make_unique<DynamicProgrammingImpl<Int>>(ssSolverMainAlgorithm.getImpl()));
+
+        auto mainAlgorithmTime = executeAndMeasureTime([&ssSolverMainAlgorithm]{ ssSolverMainAlgorithm.solve(); });
+        auto dpAlgorithmTime = executeAndMeasureTime([&ssSolverDpAlgorithm]{ ssSolverDpAlgorithm.solve(); });
+
         if(OUTPUT_TIME)
         {
-            std::cout << "Reading input time - " << readingInputTime.count() << " seconds\n";
-            std::cout << "Solving time - " << solvingTime.count() << " seconds\n";
-            std::cout << "Veryfying time - " << verifyingTime.count() << " seconds\n";
+            std::cout << "Main algorithm time - " << mainAlgorithmTime.count() << " seconds\n";
+            std::cout << "Dp algorithm time - " << dpAlgorithmTime.count() << " seconds\n";
         }
-        if(isCorrect)
+
+        if(ssSolverMainAlgorithm.result() == ssSolverDpAlgorithm.result())
             correctAnswers++;
     }
 

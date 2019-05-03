@@ -5,7 +5,7 @@
 #ifndef SUBSET_SUM_SOLVER_SUBSETSUMSOLVER_H
 #define SUBSET_SUM_SOLVER_SUBSETSUMSOLVER_H
 
-#include "SubsetSumImpl.h"
+#include "Implementations/SubsetSumImpl.h"
 
 #include <iostream>
 #include <memory>
@@ -24,9 +24,10 @@ template<typename T>
 class SubsetSumSolver
 {
 public:
-    SubsetSumSolver(std::unique_ptr<SubsetSumImpl<T>>&&);
+    explicit SubsetSumSolver(std::unique_ptr<SubsetSumImpl<T>>&&);
+
+    const SubsetSumImpl<T>& getImpl() const { return *_impl; }
     void solve();
-    bool verify() const;
     bool result() const;
 private:
     friend std::istream& operator>> <T>(std::istream&, SubsetSumSolver<T>&);

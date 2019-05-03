@@ -3,13 +3,14 @@ from __future__ import print_function
 from random import randint
 import numpy as np
 
-z = 1
+z = input()
 print(str(z))
 for i in range(0, z):
-    n = randint(2000, 5000)
-    t = randint(1000, 2000)
+    n = randint(2000, 3000)
+    t = randint(2000, 3000)
+    #t = n
     #n = randint(200000, 300000)
-    tab = [randint(0, 500) for x in range(0, n)]
+    tab = [randint(0, 10) for x in range(0, n)]
 
     print(str(n) + ' ' + str(t))
 
