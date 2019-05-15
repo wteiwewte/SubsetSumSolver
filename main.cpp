@@ -35,11 +35,10 @@ int main() {
         if(OUTPUT_TIME)
         {
             std::cout << "Main algorithm time - " << mainAlgorithmTime.count() << " seconds\n";
-            std::cout << "Dp algorithm time - " << dpAlgorithmTime.count() << " seconds\n";
+            std::cout << "Dynamic programming algorithm time - " << dpAlgorithmTime.count() << " seconds\n";
         }
 
-        if(ssSolverMainAlgorithm.result() == ssSolverDpAlgorithm.result())
-            correctAnswers++;
+        (ssSolverMainAlgorithm.result() == ssSolverDpAlgorithm.result()) ? correctAnswers++ : wrongAnswers++;
     }
 
     std::cout << "Correct answers " << correctAnswers << '\n';

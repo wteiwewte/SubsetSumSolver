@@ -29,7 +29,7 @@ shift $(($OPTIND - 1))
 
 if [ $build -eq 1 ]
 then
-/home/jan/Desktop/clion-2018.3.2/bin/cmake/linux/bin/cmake --build /home/jan/Desktop/Subset_Sum_Solver/cmake-build-debug --target Subset_Sum_Solver -- -j 2
+./build.sh
 fi
 
 if [ $generate_tests -eq 1 ]

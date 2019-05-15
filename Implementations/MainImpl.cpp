@@ -104,19 +104,6 @@ void MainImpl<T, expPolicy>::computeExp() {
     }
     else
     {
-//        {
-//            _ln[0] = 1;
-//
-//            std::vector<T> result;
-//            reciprocal(_ln, result);
-//
-//            _ln[0] = 0;
-//
-//
-//
-//
-//        }
-        std::vector<T> gResult;
         exp(_ln, _g);
     }
 }
@@ -158,50 +145,29 @@ void MainImpl<T, expPolicy>::reciprocal(const std::vector<T> &input, std::vector
 
         std::vector<T> partialResult;
         multiply<FormalSeriesMultiplicationPolicy::TRIVIAL>(inputPrefix, squareB, partialResult);
-//                for(std::size_t j = 0 ; j <= i ; ++j)
-//                    if((partialResult[j] % _p) != (b[j]))
-//                        std::cerr << "j " << j << ' ';
-//                std::cerr << std::endl;
 
         std::transform(std::make_move_iterator(partialResult.begin() + i + 1), std::make_move_iterator(partialResult.begin() + 2 * i + 2),
                        std::back_inserter(b), [this](T&& value) { return (_p - (value % _p)) % _p; });
-//                std::cerr << i << ' ' << squareB.size() << " " << inputPrefix.size() << " " << partialResult.size() << " " << b.size() << "\n";
 
         assert(b.size() == 2 * i + 2);
         if(2 * i + 2 >= bound)
             break;
     }
-//            std::cerr << b.size() << " < " << bound << std::endl;
     assert(b.size() >= bound);
-//            result.insert(result.end(), b.begin(), b.end());
     std::move(b.begin(), b.begin() + bound, std::back_inserter(result));
 
     if constexpr (CHECK_RECIPROCAL)
     {
         std::vector<T> test;
-//            FFTCalculator<T>::multiply(_ln, reciprocalLn, test);
         multiply<FormalSeriesMultiplicationPolicy::TRIVIAL>(input, result, test);
         test.resize(input.size());
-        //        std::cout << "Reciprocal\n";
-        //
-        //        for(auto number : reciprocalLn)
-        //        {
-        //            std::cout << number % _p << ' ';
-        //        } std::cout << std::endl;
+
 
         bool correct = true;
         correct &= ((test[0] % _p) == 1);
         correct &= std::all_of(test.begin() + 1, test.end(),
                                [this](const T& val) { return ((val % _p) == 0); });
         assert(correct);
-//            for(auto number : test)
-//            {
-//                std::cout << ((long long int) number) % (long long int) _p << ' ';
-//            }
-//        if(!correct)
-//            std::cerr << "WRONg " << (long long int) _p << std::endl;
-//        else
-//            std::cerr << "Correct " << (long long int) _p << std::endl;
     }
 }
 
@@ -258,10 +224,8 @@ void MainImpl<T, expPolicy>::exp(const std::vector<T> &input, std::vector<T> &re
         std::generate(diffRlandP.begin(), diffRlandP.end(), gen);
 
         std::vector<T> partialResult;
-//        std::cerr << result.size() << " " << diffRlandP.size() << '\n';
         multiply<FormalSeriesMultiplicationPolicy::TRIVIAL>(result, diffRlandP, partialResult);
-//        if(partialResult.size() < 2 * result.size())
-//            std::cerr << partialResult.size() << " " << input.size() << '\n';
+
         assert(partialResult.size() >= 2 * result.size());
         std::transform(std::make_move_iterator(partialResult.begin() + result.size()), std::make_move_iterator(partialResult.begin() + 2 * result.size()),
                        std::back_inserter(result), [this](T&& value) { return (_p - (value % _p)) % _p; });
