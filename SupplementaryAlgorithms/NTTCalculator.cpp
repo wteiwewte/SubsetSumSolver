@@ -39,11 +39,11 @@ template<typename T>
 void NTTCalculator<T>::divide(T* tab, std::size_t size)
 {
     auto* odd_elements = new T[size/2];
-    for(int i = 0; i < size/2; i++)
+    for(std::size_t i = 0; i < size/2; i++)
         odd_elements[i] = tab[i*2 + 1];
-    for(int i = 0; i < size/2; i++)
+    for(std::size_t i = 0; i < size/2; i++)
         tab[i] = tab[i*2];
-    for(int i = 0; i < size/2; i++)
+    for(std::size_t i = 0; i < size/2; i++)
         tab[i + size/2] = odd_elements[i];
     delete[] odd_elements;
 }
@@ -58,7 +58,7 @@ void NTTCalculator<T>::ntt(T* tab, std::size_t size)
     divide(tab, size);
     ntt<kind>(tab, size/2);
     ntt<kind>(tab + size/2, size/2);
-    for(int i = 0; i < size/2; i++ ) {
+    for(std::size_t i = 0; i < size/2; i++ ) {
         Int t = tab[i];
         tab[i] = (tab[i] + ((exponent * tab[i+size/2]) % MOD)) % MOD;
         tab[i + size/2] = (t - ((exponent * tab[i + size/2]) % MOD) + MOD) % MOD;

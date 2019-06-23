@@ -31,7 +31,6 @@ private:
     std::vector<T> _inversions_mod_p;
     std::vector<T> _ln;
     std::vector<T> _g;
-    std::vector<T> _gDivideAndConquer;
     T _p;
 };
 

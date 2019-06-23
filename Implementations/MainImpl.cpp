@@ -60,8 +60,6 @@ void MainImpl<T, expPolicy, multPolicy>::init() {
     _ln.resize(_target + 1, 0);
     _g.resize(_target + 1, 0);
     _g[0] = 1;
-    _gDivideAndConquer.resize(_target + 1, 0);
-    _gDivideAndConquer[0] = 1;
 //    _p = getRandomPrimeFromRange({_target + 1, fast_exp<T>(_target + _size, 3)});
     _p = NTTCalculator<T>::getMod(_target + 1);
 //    _p = 11;
@@ -73,8 +71,8 @@ void MainImpl<T, expPolicy, multPolicy>::init() {
 
 template<typename T, ExponentCalculationPolicy expPolicy, FormalSeriesMultiplicationPolicy multPolicy>
 void MainImpl<T, expPolicy, multPolicy>::computeExp() {
-//    if constexpr(expPolicy == ExponentCalculationPolicy::DIVIDE_AND_CONQUER)
-//    {
+    if constexpr(expPolicy == ExponentCalculationPolicy::DIVIDE_AND_CONQUER)
+    {
         std::function<void(std::size_t, std::size_t)> compute = [this, &compute](std::size_t l, std::size_t r) {
             if(l < r)
             {
@@ -87,7 +85,7 @@ void MainImpl<T, expPolicy, multPolicy>::computeExp() {
 
                 std::vector<T> G(m - l + 1);
                 for(std::size_t j = 0; j <= m - l; ++j)
-                    G[j] = _gDivideAndConquer[j + l];
+                    G[j] = _g[j + l];
 
                 std::vector<T> H;
                 multiply(F, G, H);
@@ -95,11 +93,8 @@ void MainImpl<T, expPolicy, multPolicy>::computeExp() {
 
                 for(std::size_t i = m + 1; i <= r; ++i)
                 {
-//                    _g[i] += ((_inversions_mod_p[i] * (H[i - l] % _p)) % _p);
-//                    _g[i] %= _p;
-                    _gDivideAndConquer[i] += ((_inversions_mod_p[i] * (H[i - l] % _p)) % _p);
-                    _gDivideAndConquer[i] %= _p;
-
+                    _g[i] += ((_inversions_mod_p[i] * (H[i - l] % _p)) % _p);
+                    _g[i] %= _p;
                 }
 
                 std::vector<T>().swap(F);
@@ -111,17 +106,11 @@ void MainImpl<T, expPolicy, multPolicy>::computeExp() {
         };
 
         compute(0, _target);
-//    }
-//    else
-//    {
-//        _g = exp(_ln);
-//        std::cout << "Correct g: " << _gDivideAndConquer << '\n';
-//        exp(_ln, _g);
-        expV2(_ln, _g);
-//        std::cout << "g: " << _g << '\n';
-//        std::vector<T> gV2 = _g;
-//        std::cout << "gV2: " << gV2 << '\n';
-//    }
+    }
+    else
+    {
+      expV2(_ln, _g);
+    }
 }
 
 template<typename T, ExponentCalculationPolicy expPolicy, FormalSeriesMultiplicationPolicy multPolicy>
@@ -267,7 +256,7 @@ void MainImpl<T, expPolicy, multPolicy>::exp(const std::vector<T> &input, std::v
 template<typename T, ExponentCalculationPolicy expPolicy, FormalSeriesMultiplicationPolicy multPolicy>
 void MainImpl<T, expPolicy, multPolicy>::expV2(const std::vector<T> &input, std::vector<T> &result) {
     assert(input[0] == 0);
-    result.resize(input.size(), 0);
+    result.resize(2, 0);
     result[0] = 1;
     for(std::size_t i = 1 ; i < input.size(); i *= 2)
     {
@@ -290,8 +279,9 @@ void MainImpl<T, expPolicy, multPolicy>::expV2(const std::vector<T> &input, std:
         multiply(result, diffRlandP, partialResult);
 
 //        std::cout << partialResult << " partialResult\n";
-        for(std::size_t j = i; j < std::min(result.size(), 2 * i) ; ++j)
+        for(std::size_t j = i; j < std::min(input.size(), 2 * i) ; ++j)
             result[j] = (result[j] - partialResult[j] + _p) % _p;
+        result.resize(std::min(input.size(), 4 * i), 0);
 //        std::transform(std::make_move_iterator(partialResult.begin() + result.size()),
 //                       std::make_move_iterator(partialResult.begin() + 2 * result.size()),
 //                       std::back_inserter(result), [this](T&& value) { return (_p - (value % _p)) % _p; });
