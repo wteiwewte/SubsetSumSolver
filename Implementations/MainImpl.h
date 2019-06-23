@@ -8,7 +8,7 @@
 #include "Common/ConstantsAndTypes.h"
 #include "SubsetSumImpl.h"
 
-template<typename T, ExponentCalculationPolicy expPolicy>
+template<typename T, ExponentCalculationPolicy expPolicy, FormalSeriesMultiplicationPolicy multPolicy>
 class MainImpl : public SubsetSumImpl<T> {
 public:
     void solve() override;
@@ -22,15 +22,16 @@ private:
     void reciprocal(const std::vector<T>& input, std::vector<T>& result);
     void log(const std::vector<T>& input, std::vector<T>& result);
     void exp(const std::vector<T>& input, std::vector<T>& result);
+    void expV2(const std::vector<T>& input, std::vector<T>& result);
     void computeLog();
     void computeExp();
-    template<FormalSeriesMultiplicationPolicy policy>
     void multiply(const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &result);
     void init() override;
 
     std::vector<T> _inversions_mod_p;
     std::vector<T> _ln;
     std::vector<T> _g;
+    std::vector<T> _gDivideAndConquer;
     T _p;
 };
 

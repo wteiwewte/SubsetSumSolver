@@ -10,7 +10,7 @@
 template<typename T>
 void FFTCalculator<T>::multiply(const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &result)
 {
-    T max_len = getPowerOf2GreaterThan(static_cast<T>(a.size() + b.size()));
+    std::size_t max_len = getPowerOf2GreaterThan(a.size() + b.size());
     for(std::size_t i = 0 ; i < max_len ; ++i ) {
         A[i] = B[i] = C[i] = 0;
     }
@@ -37,7 +37,7 @@ void FFTCalculator<T>::multiply(const std::vector<T> &a, const std::vector<T> &b
 }
 
 template<typename T>
-void FFTCalculator<T>::divide(std::complex<FloatingType> *tab, T size)
+void FFTCalculator<T>::divide(std::complex<FloatingType> *tab, std::size_t size)
 {
     auto* odd_elements = new std::complex<FloatingType>[size/2];
     for(std::size_t i = 0; i < size/2; i++)
@@ -50,7 +50,7 @@ void FFTCalculator<T>::divide(std::complex<FloatingType> *tab, T size)
 }
 
 template<typename T>
-void FFTCalculator<T>::fft(std::complex<FloatingType> *tab, T size)
+void FFTCalculator<T>::fft(std::complex<FloatingType> *tab, std::size_t size)
 {
     if( size < 2 ) return;
     auto w_n =  exp(std::complex<FloatingType>(0.0, 2.0* PI/size));
@@ -69,7 +69,7 @@ void FFTCalculator<T>::fft(std::complex<FloatingType> *tab, T size)
 }
 
 template<typename T>
-void FFTCalculator<T>::ifft(std::complex<FloatingType> *tab, T size)
+void FFTCalculator<T>::ifft(std::complex<FloatingType> *tab, std::size_t size)
 {
     transform(tab, tab+size, tab, [](std::complex<FloatingType> const& c){
         return conj(c);
@@ -81,7 +81,36 @@ void FFTCalculator<T>::ifft(std::complex<FloatingType> *tab, T size)
         auto conj_c = conj(c);
         conj_c /= size;
         return conj_c;
-    } );
+    });
+}
+
+template<typename T>
+std::vector<T> FFTCalculator<T>::multiply(const std::vector<T> &a, const std::vector<T> &b) {
+    std::size_t max_len = getPowerOf2GreaterThan(a.size() + b.size());
+    for(std::size_t i = 0 ; i < max_len ; ++i ) {
+        A[i] = B[i] = C[i] = 0;
+    }
+
+    for(std::size_t i = 0 ; i < a.size(); ++i ){
+        A[i] = a[i];
+    }
+    for(std::size_t i = 0 ; i < b.size(); ++i ){
+        B[i] = b[i];
+    }
+
+    fft(A, max_len);
+    fft(B, max_len);
+
+    for(std::size_t i = 0 ; i < max_len; ++i )
+        C[i] = A[i] * B[i];
+
+    ifft(C, max_len);
+
+    T sum_lens = static_cast<T>(a.size() + b.size());
+    std::vector<T> result(sum_lens - 1);
+    for(std::size_t i = 0 ; i < sum_lens - 1; ++i )
+        result[i] = round((double) C[i].real());
+    return result;
 }
 
 template class FFTCalculator<Int>;

@@ -11,8 +11,6 @@
 int main() {
     std::iostream::sync_with_stdio(false);
 //    std::cin.tie(nullptr);
-//    std::cout << PrimeDecider<__int128>::isPrime(9999999) << '\n';
-//    std::cout << PrimeDecider<__int128>::isPrime(179426369) << '\n';
 
     int z;
     std::cin >> z;
@@ -22,8 +20,13 @@ int main() {
 
     while( z-- )
     {
-//        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER>>());
-        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD>>());
+//        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER, FormalSeriesMultiplicationPolicy::NTT>>());
+//        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int,
+//                ExponentCalculationPolicy::DIVIDE_AND_CONQUER,
+//                FormalSeriesMultiplicationPolicy::TRIVIAL>>());
+        SubsetSumSolver<Int> ssSolverMainAlgorithm(std::make_unique<MainImpl<Int,
+                ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD,
+                FormalSeriesMultiplicationPolicy::NTT>>());
 
         std::cin >> ssSolverMainAlgorithm;
 
@@ -34,8 +37,10 @@ int main() {
 
         if(OUTPUT_TIME)
         {
-            std::cout << "Main algorithm time - " << mainAlgorithmTime.count() << " seconds\n";
-            std::cout << "Dynamic programming algorithm time - " << dpAlgorithmTime.count() << " seconds\n";
+            std::cout << "Main algorithm time - " << mainAlgorithmTime.count() << " seconds, "
+                    << ssSolverMainAlgorithm.result() << " result\n";
+            std::cout << "Dynamic programming algorithm time - " << dpAlgorithmTime.count() << " seconds, "
+                    << ssSolverDpAlgorithm.result() << " result\n";
         }
 
         (ssSolverMainAlgorithm.result() == ssSolverDpAlgorithm.result()) ? correctAnswers++ : wrongAnswers++;

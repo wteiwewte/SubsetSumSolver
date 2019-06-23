@@ -10,6 +10,7 @@
 //using Int = long long int;
 //using Int = boost::multiprecision::int128_t;
 using Int = __int128;
+using LL = long long int;
 
 constexpr bool OUTPUT_TIME = true;
 constexpr bool OUTPUT_TEST_SIZE = true;
@@ -23,7 +24,7 @@ enum class ExponentCalculationPolicy {
 
 enum class FormalSeriesMultiplicationPolicy{
     FFT = 0,
-    MODULAR_FFT,
+    NTT,
     TRIVIAL,
 };
 

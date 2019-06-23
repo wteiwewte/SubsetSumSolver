@@ -6,12 +6,13 @@
 #define SUBSET_SUM_SOLVER_UTIL_H
 
 #include <chrono>
+#include <iostream>
 #include <type_traits>
 
 template<typename T>
 T getPowerOf2GreaterThan(T atleast)
 {
-    T temp = 1;
+    std::size_t temp = 1;
     while(temp < atleast)
         temp <<= 1;
     return temp;
@@ -73,6 +74,14 @@ std::enable_if_t<std::is_same_v<std::decay_t <typename std::invoke_result_t<Func
     f();
     auto end = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<TimeRep>(end - start);
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::vector<T>& x)
+{
+    for(auto t : x)
+        out << (long long int) t << ' ';
+    return out;
 }
 
 #endif //SUBSET_SUM_SOLVER_UTIL_H

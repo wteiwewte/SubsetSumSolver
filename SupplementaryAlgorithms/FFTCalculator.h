@@ -29,11 +29,12 @@ class FFTCalculator
 
     static inline std::complex<FloatingType> A[N_MAX], B[N_MAX], C[N_MAX];
 
-    static void divide(std::complex<FloatingType>* tab, T size);
-    static void fft(std::complex<FloatingType>* tab, T size);
-    static void ifft(std::complex<FloatingType>* tab, T size);
+    static void divide(std::complex<FloatingType>* tab, std::size_t size);
+    static void fft(std::complex<FloatingType>* tab, std::size_t size);
+    static void ifft(std::complex<FloatingType>* tab, std::size_t size);
 public:
     static void multiply(const std::vector<T>& a, const std::vector<T>& b, std::vector<T>& result);
+    static std::vector<T> multiply(const std::vector<T>& a, const std::vector<T>& b);
 };
 
 
