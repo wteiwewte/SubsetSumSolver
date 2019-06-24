@@ -9,7 +9,9 @@
 
 template<typename T>
 class FormalPowerSeries : public std::vector<T> {
-    static void reciprocal(const FormalPowerSeries<T>& input, FormalPowerSeries<T>& result);
 };
+
+template<typename T>
+void reciprocal(const FormalPowerSeries<T>& input, FormalPowerSeries<T>& result);
 
 #endif //SUBSET_SUM_SOLVER_FORMALPOWERSERIES_H

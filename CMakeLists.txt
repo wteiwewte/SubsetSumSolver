@@ -28,7 +28,7 @@ add_executable(Subset_Sum_Solver
         DataModel/FormalPowerSeries.h
         Implementations/DynamicProgrammingImpl.cpp
         Implementations/DynamicProgrammingImpl.h
-        DataModel/ZpField.cpp
-        DataModel/ZpField.h
+        DataModel/Zp.cpp
+        DataModel/Zp.h
         SupplementaryAlgorithms/NTTCalculator.cpp
         SupplementaryAlgorithms/NTTCalculator.h)

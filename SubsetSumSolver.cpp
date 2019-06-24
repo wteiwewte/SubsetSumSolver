@@ -3,6 +3,7 @@
 //
 
 #include "Common/ConstantsAndTypes.h"
+#include "DataModel/Zp.h"
 #include "SubsetSumSolver.h"
 
 template<typename T>
@@ -36,6 +37,7 @@ bool SubsetSumSolver<T>::result() const
 }
 
 template class SubsetSumSolver<Int>;
+//template class SubsetSumSolver<Zp<Int>>;
 
 template std::istream& operator>>(std::istream&, SubsetSumSolver<Int>&);
 template std::ostream& operator<<(std::ostream&, const SubsetSumSolver<Int>&);

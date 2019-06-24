@@ -1,35 +1,24 @@
 #include "Common/ConstantsAndTypes.h"
+#include "Common/Util.h"
+#include "DataModel/Zp.h"
 #include "Implementations/DynamicProgrammingImpl.h"
 #include "Implementations/MainImpl.h"
-#include "SupplementaryAlgorithms/PrimeDecider.h"
 #include "SubsetSumSolver.h"
-#include "Common/Util.h"
+#include "SupplementaryAlgorithms/PrimeDecider.h"
+
 
 #include <iostream>
 #include <functional>
 #include <map>
 
 int main() {
-    std::iostream::sync_with_stdio(false);
+//    std::iostream::sync_with_stdio(false);
 //    std::cin.tie(nullptr);
 
     int z;
     std::cin >> z;
 
     std::size_t correctAnswers = 0, wrongAnswers = 0;
-
-
-    std::map<ExponentCalculationPolicy, std::string> expPolicyNames =
-    {
-            {ExponentCalculationPolicy::DIVIDE_AND_CONQUER, "DIVIDE_AND_CONQUER"},
-            {ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD, "NEWTONS_ITERATIVE_METHOD"}
-    };
-    std::map<FormalSeriesMultiplicationPolicy , std::string> multPolicyNames =
-    {
-            {FormalSeriesMultiplicationPolicy::TRIVIAL, "TRIVIAL"},
-            {FormalSeriesMultiplicationPolicy::NTT, "NTT"},
-            {FormalSeriesMultiplicationPolicy::FFT, "FFT"}
-    };
 
     while( z-- )
     {

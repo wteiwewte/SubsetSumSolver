@@ -22,7 +22,6 @@ private:
     void reciprocal(const std::vector<T>& input, std::vector<T>& result);
     void log(const std::vector<T>& input, std::vector<T>& result);
     void exp(const std::vector<T>& input, std::vector<T>& result);
-    void expV2(const std::vector<T>& input, std::vector<T>& result);
     void computeLog();
     void computeExp();
     void multiply(const std::vector<T> &a, const std::vector<T> &b, std::vector<T> &result);

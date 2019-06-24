@@ -23,18 +23,19 @@ using FloatingType = long double;
 template<typename T>
 class FFTCalculator
 {
-    static constexpr Int N_MAX = static_cast<const Int>(2e6);
+    using complex_type = std::complex<FloatingType>;
+    constexpr static Int N_MAX = static_cast<const Int>(2e6);
 //    static constexpr FloatingType PI = 3.14159265358979323;
-    static inline FloatingType PI = boost::math::constants::pi<FloatingType>();
+    constexpr static FloatingType PI = boost::math::constants::pi<FloatingType>();
 
-    static inline std::complex<FloatingType> A[N_MAX], B[N_MAX], C[N_MAX];
+    static inline complex_type A[N_MAX], B[N_MAX];
 
-    static void divide(std::complex<FloatingType>* tab, std::size_t size);
-    static void fft(std::complex<FloatingType>* tab, std::size_t size);
-    static void ifft(std::complex<FloatingType>* tab, std::size_t size);
+    static void divide(complex_type* tab, std::size_t size);
+    static void fft(complex_type* tab, std::size_t size);
+    static void ifft(complex_type* tab, std::size_t size);
 public:
-    static void multiply(const std::vector<T>& a, const std::vector<T>& b, std::vector<T>& result);
-    static std::vector<T> multiply(const std::vector<T>& a, const std::vector<T>& b);
+    static void multiply(const std::vector<T>& x, const std::vector<T>& y, std::vector<T>& result);
+    static void multiplyNoOverflow(const std::vector<T>& x, const std::vector<T>& y, std::vector<T>& result, const T MOD);
 };
 
 
