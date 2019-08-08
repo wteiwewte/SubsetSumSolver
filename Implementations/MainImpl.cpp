@@ -19,7 +19,7 @@ T MainImpl<T, expPolicy, multPolicy>::getRandomPrimeFromRange(std::pair<T, T> ra
 {
     static std::random_device rd;
     static std::mt19937 eng(rd());
-    static std::uniform_int_distribution<T> distr(range.first, range.second);
+    std::uniform_int_distribution<T> distr(range.first, range.second);
 
     T prime;
     while(!PrimeDecider<T>::isPrime((prime = distr(eng))));
@@ -122,10 +122,6 @@ void MainImpl<T, expPolicy, multPolicy>::computeExp() {
     }
     else
     {
-//        std::cout << "HALO\n";
-//        std::vector<T> result;
-//        NTTCalculator<T>::multiplyWithOverflowCheck(_ln, _g, result, _target + 1);
-//        std::cout << "HALO1\n";
         exp(_ln, _g);
     }
 }
@@ -169,7 +165,9 @@ void MainImpl<T, expPolicy, multPolicy>::reciprocal(const std::vector<T> &input,
 
         std::vector<T> partialResult;
         multiply(inputPrefix, squareB, partialResult);
-
+        // temp = makeSeriesFromRange(input.begin(), input.begin() + std::min(input.size(), 2 * i + 2)) * (b * b)
+        //return makeSeriesFromRange(temp.begin() + i + 1, temp.begin() + 2 * i + 2)
+        //
         std::transform(std::make_move_iterator(partialResult.begin() + i + 1), std::make_move_iterator(partialResult.begin() + 2 * i + 2),
                        std::back_inserter(b), [this](T&& value) { return (_p - (value % _p)) % _p; });
 
@@ -190,7 +188,7 @@ void MainImpl<T, expPolicy, multPolicy>::reciprocal(const std::vector<T> &input,
         bool correct = true;
         correct &= ((test[0] % _p) == 1);
         correct &= std::all_of(test.begin() + 1, test.end(),
-                               [this](const T& val) { return ((val % _p) == 0); });
+                               [](const T& val) { return val == 0; });
         assert(correct);
     }
 }
@@ -218,6 +216,8 @@ void MainImpl<T, expPolicy, multPolicy>::log(const std::vector<T> &input, std::v
 
     result.resize(input.size(), 0);
 
+    //return shift_with_inversions(derivative(input) * reciprocal(input)) *
+
     for(std::size_t i = 1 ; i < result.size(); ++i)
         result[i] = (_inversions_mod_p[i] * shiftedResult[i - 1]) % _p;
 }
@@ -232,7 +232,7 @@ void MainImpl<T, expPolicy, multPolicy>::exp(const std::vector<T> &input, std::v
         log(result, logRl);
         assert(logRl.size() == result.size());
         std::vector<T> diffRlandP(result.size());
-
+        // result -= result * (log(result) - input);
         for (std::size_t j = 0; j < diffRlandP.size(); ++j) {
             diffRlandP[j] = logRl[j] - input[j];
             diffRlandP[j] = (diffRlandP[j] < 0) ? (diffRlandP[j] + _p) : diffRlandP[j];
@@ -242,6 +242,8 @@ void MainImpl<T, expPolicy, multPolicy>::exp(const std::vector<T> &input, std::v
         std::vector<T> partialResult;
         multiply(result, diffRlandP, partialResult);
 
+        assert(std::all_of(partialResult.begin(), partialResult.begin() + i,
+                [](const T& value){ return value == 0; }));
         for (std::size_t j = i; j < std::min(input.size(), 2 * i); ++j)
             result[j] = (result[j] - partialResult[j] + _p) % _p;
 //        std::transform(std::make_move_iterator(partialResult.begin() + result.size()),
@@ -252,8 +254,8 @@ void MainImpl<T, expPolicy, multPolicy>::exp(const std::vector<T> &input, std::v
 
 template class MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER, FormalSeriesMultiplicationPolicy::FFT>;
 template class MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER, FormalSeriesMultiplicationPolicy::NTT>;
+//template class MainImpl<Zp<Int>, ExponentCalculationPolicy::DIVIDE_AND_CONQUER, FormalSeriesMultiplicationPolicy::NTT>;
 template class MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER, FormalSeriesMultiplicationPolicy::TRIVIAL>;
 template class MainImpl<Int, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD, FormalSeriesMultiplicationPolicy::FFT>;
 template class MainImpl<Int, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD, FormalSeriesMultiplicationPolicy::NTT>;
-//template class MainImpl<Zp<Int>, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD, FormalSeriesMultiplicationPolicy::NTT>;
 template class MainImpl<Int, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD, FormalSeriesMultiplicationPolicy::TRIVIAL>;

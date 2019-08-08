@@ -29,6 +29,14 @@ private:
     static inline std::vector<T> inversions_mod_p {};
 
     template<typename U>
+    friend constexpr bool operator<(const Zp<U>& a, const Zp<U>& b);
+    template<typename U>
+    friend constexpr bool operator==(const Zp<U>& a, const Zp<U>& b);
+    template<typename U>
+    friend constexpr bool operator!=(const Zp<U>& a, const Zp<U>& b);
+
+
+    template<typename U>
     friend constexpr Zp<U> operator+(const Zp<U>& a, const Zp<U>& b);
     template<typename U>
     friend constexpr Zp<U> operator-(const Zp<U>& a, const Zp<U>& b);

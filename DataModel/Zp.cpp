@@ -83,5 +83,20 @@ Zp<T> Zp<T>::getInversion(Zp<T> value) {
     return inversions_mod_p[value._value];
 }
 
+template<typename U>
+constexpr bool operator<(const Zp<U> &a, const Zp<U> &b) {
+    return a._value < b._value;
+}
+
+template<typename U>
+constexpr bool operator==(const Zp<U> &a, const Zp<U> &b) {
+    return a._value == b._value;
+}
+
+template<typename U>
+constexpr bool operator!=(const Zp<U> &a, const Zp<U> &b) {
+    return !(a == b);
+}
+
 
 template class Zp<Int>;
