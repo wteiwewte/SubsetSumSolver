@@ -26,7 +26,7 @@ std::istream& operator>>(std::istream& istr, SubsetSumImpl<T>& ss)
     if(OUTPUT_TEST_SIZE)
         std::cout << "\nTest size : n - " << (long long int) ss._size << ", t - " << (long long int) ss._target << '\n';
     ss._tab.resize(ss._size + 1);
-    for (std::size_t i = 1; i <= ss._size ; ++i)
+    for (T i = 1; i <= ss._size ; ++i)
     {
         long long int temp;
         istr >> temp;
@@ -41,7 +41,7 @@ template<typename T>
 std::ostream& operator<<(std::ostream& ostr, const SubsetSumImpl<T>& ss)
 {
     ostr << ss._size << ' ' << (long long int) ss._target << std::endl;
-    for (std::size_t i = 1; i <= ss._size ; ++i)
+    for (T i = 1; i <= ss._size ; ++i)
     {
         ostr << (long long int) ss._tab[i] << ' ';
     }

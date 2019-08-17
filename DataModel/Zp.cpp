@@ -10,93 +10,26 @@
 #include <cassert>
 
 template<typename T>
-void Zp<T>::init(T p, std::size_t inversionsToInit) {
+void Zp<T>::init(const T prime, const std::size_t inversionsToInit) {
     static_assert(std::is_integral_v<T>, "T isn't integral type!");
-    assert(PrimeDecider<T>::isPrime(p));
-    prime = p;
+    assert(PrimeDecider<T>::isPrime(prime));
+    p = prime;
     initialized = true;
-    inversions_mod_p.resize(inversionsToInit, T(0));
+    inversions_mod_p.resize(inversionsToInit + 1, T(0));
     for(std::size_t i =  1 ; i <= inversionsToInit; ++i)
-        inversions_mod_p[i] = fast_exp<T>(i, prime - 2, prime);
+        inversions_mod_p[i] = fast_exp<T>(i, p - 2, p);
 }
 
 template<typename T>
-Zp<T> Zp<T>::operator+() const {
-    return Zp<T>(_value);
+Zp<T> Zp<T>::getInversion(const Zp<T> value) {
+//    return Zp(inversions_mod_p[value._value]);
+    return Zp(fast_exp(value._value, p - 2, p));
 }
 
 template<typename T>
-Zp<T> Zp<T>::operator-() const {
-    return Zp<T>(prime - _value);
+Zp<T> Zp<T>::getInversion(const T value) {
+//    return Zp(inversions_mod_p[value]);
+    return Zp(fast_exp(value, p - 2, p));
 }
-
-//Incrementing/decrementing functions not taking remainder mod prime due to performance reasons
-template<typename T>
-Zp<T>& Zp<T>::operator++() {
-    _value++;
-    return *this;
-}
-
-template<typename T>
-Zp<T> &Zp<T>::operator--() {
-    _value--;
-    return *this;
-}
-
-template<typename T>
-Zp<T> Zp<T>::operator++(int) {
-    return Zp<T>(_value++);
-}
-
-template<typename T>
-Zp<T> Zp<T>::operator--(int) {
-    return Zp<T>(_value--);
-}
-
-template<typename T>
-constexpr Zp<T> operator+(const Zp<T> &a, const Zp<T> &b) {
-    return Zp<T>((a._value + b._value) % Zp<T>::prime);
-}
-
-template<typename T>
-constexpr Zp<T> operator%(const Zp<T> &a, const Zp<T> &b) {
-    return Zp<T>((a._value % b._value) % Zp<T>::prime);
-}
-
-template<typename T>
-constexpr Zp<T> operator/(const Zp<T> &a, const Zp<T> &b) {
-    return Zp<T>((a._value * Zp<T>::getInversion(b)) % Zp<T>::prime);
-}
-
-template<typename T>
-constexpr Zp<T> operator*(const Zp<T> &a, const Zp<T> &b) {
-    return Zp<T>((a._value * b._value) % Zp<T>::prime);
-}
-
-template<typename T>
-constexpr Zp<T> operator-(const Zp<T> &a, const Zp<T> &b) {
-    return Zp<T>((a._value + (-b._value)) % Zp<T>::prime);
-}
-
-template<typename T>
-Zp<T> Zp<T>::getInversion(Zp<T> value) {
-    return inversions_mod_p[value._value];
-}
-
-template<typename U>
-constexpr bool operator<(const Zp<U> &a, const Zp<U> &b) {
-    return a._value < b._value;
-}
-
-template<typename U>
-constexpr bool operator==(const Zp<U> &a, const Zp<U> &b) {
-    return a._value == b._value;
-}
-
-template<typename U>
-constexpr bool operator!=(const Zp<U> &a, const Zp<U> &b) {
-    return !(a == b);
-}
-
 
 template class Zp<Int>;

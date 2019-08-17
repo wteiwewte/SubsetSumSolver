@@ -6,12 +6,10 @@
 #define SUBSET_SUM_SOLVER_NTTCALCULATOR_H
 
 #include "Common/ConstantsAndTypes.h"
-#include <vector>
+#include "DataModel/FormalPowerSeries.h"
+#include "DataModel/Zp.h"
 
-enum class NTTKind{
-    NORMAL = 0,
-    INVERSE
-};
+#include <array>
 
 constexpr int MOD_INT = 2013265921;
 constexpr int ROOT_INT = 440564289;
@@ -24,10 +22,16 @@ template<typename T>
 class NTTCalculator
 {
     constexpr static Int N_MAX = static_cast<const Int>(2e6);
-    static inline T A[N_MAX], B[N_MAX];
+    static inline std::array<T, N_MAX> A, B;
+    static inline bool initialized = false;;
 public:
-    static Int getMod(std::size_t bound) { return (bound <= std::numeric_limits<int>::max()) ? MOD_INT : MOD_LONG_LONG; }
-    static void multiply(const std::vector<T>& x, const std::vector<T>& y, std::vector<T>& result, std::size_t bound);
+    static T initModRootOrd(const std::size_t bound);
+    static void multiply(const FormalPowerSeries<Zp<T>>& x,
+                         const FormalPowerSeries<Zp<T>>& y,
+                         FormalPowerSeries<Zp<T>>& result);
+    static void multiply(const std::vector<T>& x,
+                         const std::vector<T>& y,
+                         std::vector<T>& result);
     static void multiplyWithOverflowCheck(const std::vector<T>& x, const std::vector<T>& y, std::vector<T>& result, std::size_t bound);
 };
 
