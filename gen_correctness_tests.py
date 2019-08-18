@@ -1,11 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from __future__ import print_function
 from random import randint
 import numpy as np
 
 z = input()
-print(str(2*z))
-for i in range(0, z):
+print(str(2*int(z)))
+for i in range(0, int(z)):
     subfactors = []
     t = randint(10000, 15000)
     copy_t = t

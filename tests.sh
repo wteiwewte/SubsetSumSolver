@@ -38,11 +38,11 @@ printf "$tests" | ./gen.py > in.txt
 printf "$tests" | ./gen_correctness_tests.py > in_correctness.txt
 fi
 
-#cmake-build-debug/Subset_Sum_Solver < in.txt
+#build/src/Main < in.txt
 echo "Correctness tests:"
-cmake-build-debug/Subset_Sum_Solver < in_correctness.txt
+build/src/Main < in_correctness.txt
 
 if [ $profile -eq 1 ]
 then
-gprof cmake-build-debug/Subset_Sum_Solver < in.txt > gprof.log
+gprof build/src/Main < in.txt > gprof.log
 fi
