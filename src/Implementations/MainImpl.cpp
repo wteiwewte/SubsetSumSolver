@@ -17,6 +17,12 @@
 #include <random>
 
 template <typename T, ExponentCalculationPolicy expPolicy>
+MainImpl<T, expPolicy>::MainImpl(const SubsetSumImpl<T>& otherImpl) : SubsetSumImpl<T>(otherImpl)
+{
+  init();
+}
+
+template <typename T, ExponentCalculationPolicy expPolicy>
 T
 MainImpl<T, expPolicy>::getRandomPrimeFromRange(const std::pair<T, T>& range)
 {
@@ -65,7 +71,7 @@ MainImpl<T, expPolicy>::init()
 {
   if constexpr (FORMAL_SERIES_MULT_POLICY == NTT)
   {
-    const T p = NTTCalculator<T>::initModRootOrd();
+    const T p = NTTCalculator<smaller_t<T>>::initModRootOrd();
     assert(_target < p);
     Zp<T>::init(p, _target);
   }

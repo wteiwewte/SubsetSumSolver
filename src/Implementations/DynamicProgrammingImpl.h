@@ -25,6 +25,7 @@ private:
 
   void init() override;
 
+  bool _allocationSucceded;
   bool** _doesSumExist;
 };
 

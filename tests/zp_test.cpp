@@ -169,7 +169,7 @@ TYPED_TEST(ZpTest, TestZpAssignmentRemainderInt)
 
 TYPED_TEST(ZpTest, TestZpInversion)
 {
-  EXPECT_EQ((this->_aZp / this->_bZp) * this->_bZp, Zp(1));
+  EXPECT_EQ((this->_aZp / this->_bZp) * this->_bZp, this->_aZp);
 }
 
 TYPED_TEST(ZpTest, TestZpSumZp)
@@ -191,8 +191,38 @@ TYPED_TEST(ZpTest, TestZpDivisionZp)
             (TestFixture::_a * this->calculateInversion(TestFixture::_b)) % TestFixture::_p);
 }
 
-TYPED_TEST(ZpTest, TestZpRemainderZp)
+TYPED_TEST(ZpTest, TestZpCmpEqual)
 {
-  EXPECT_EQ((TypeParam)(this->_aZp % this->_bZp),
-            (TestFixture::_a % TestFixture::_p) % (TestFixture::_b % TestFixture::_p));
+  EXPECT_EQ(this->_aZp == this->_bZp,
+            (TestFixture::_a % TestFixture::_p) == (TestFixture::_b % TestFixture::_p));
+}
+
+TYPED_TEST(ZpTest, TestZpCmpNotEqual)
+{
+  EXPECT_EQ(this->_aZp != this->_bZp,
+            (TestFixture::_a % TestFixture::_p) != (TestFixture::_b % TestFixture::_p));
+}
+
+TYPED_TEST(ZpTest, TestZpCmpLess)
+{
+  EXPECT_EQ(this->_aZp < this->_bZp,
+            (TestFixture::_a % TestFixture::_p) < (TestFixture::_b % TestFixture::_p));
+}
+
+TYPED_TEST(ZpTest, TestZpCmpLestOrEqual)
+{
+  EXPECT_EQ(this->_aZp <= this->_bZp,
+            (TestFixture::_a % TestFixture::_p) <= (TestFixture::_b % TestFixture::_p));
+}
+
+TYPED_TEST(ZpTest, TestZpCmpGreater)
+{
+  EXPECT_EQ(this->_aZp >= this->_bZp,
+            (TestFixture::_a % TestFixture::_p) >= (TestFixture::_b % TestFixture::_p));
+}
+
+TYPED_TEST(ZpTest, TestZpCmpGreaterOrEqual)
+{
+  EXPECT_EQ(this->_aZp > this->_bZp,
+            (TestFixture::_a % TestFixture::_p) > (TestFixture::_b % TestFixture::_p));
 }

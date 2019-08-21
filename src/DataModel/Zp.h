@@ -7,6 +7,7 @@
 
 #include "Common/ConstantsAndTypes.h"
 
+#include <cassert>
 #include <vector>
 
 struct take_remainder_t

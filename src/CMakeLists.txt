@@ -1,8 +1,7 @@
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Werror -fsanitize=address -ftest-coverage")
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Werror -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Wall -Werror")
-set(CMAKE_EXE_LINKER_FLAGS "-pg -lm -fext-numeric-literals -lquadmath -lgcov")
 #set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 include_directories(. GSL/include)

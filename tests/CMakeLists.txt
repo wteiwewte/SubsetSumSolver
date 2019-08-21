@@ -1,6 +1,5 @@
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Werror -fsanitize=address -ftest-coverage")
-set(CMAKE_EXE_LINKER_FLAGS "-pg -lm -fext-numeric-literals -lquadmath -lgcov")
+set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Werror -fsanitize=address")
 
 # Download and unpack googletest at configure time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
@@ -34,32 +33,10 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
   include_directories("${gtest_SOURCE_DIR}/include")
 endif()
 
-# Now simply link against gtest or gtest_main as needed. Eg
-# add_executable(example example.cpp)
-# target_link_libraries(example gtest_main)
-# add_test(NAME example_test COMMAND example)
-
-include_directories(../src/ ../src/GSL/include)
+include_directories(../src/)
 
 add_executable (Test zp_test.cpp formalpowerseries_test.cpp)
 target_link_libraries (Test Subset_Sum_Solver gtest_main gtest)
-add_test (NAME Test COMMAND ZpTest)
-
-# function(create_test name)
-#     add_executable(${name} ${name}.cpp)
-#     target_link_libraries(${name}
-#         Subset_Sum_Solver
-#         gtest
-#         gtest_main
-#     )
-#     add_dependencies(${name} gtest)
-#     add_test(
-#       ${name}
-#       ${name}
-#     )
-# endfunction()
-
-# create_test(zp_test)
 
 
 

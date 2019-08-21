@@ -22,9 +22,7 @@ template <typename T>
 class NTTCalculator
 {
   constexpr static Int N_MAX = static_cast<const Int>(2e6);
-  static inline std::array<T, N_MAX> A, B;
   static inline bool initialized = false;
-
 public:
   static T initModRootOrd();
   static FormalPowerSeries<Zp<T>>

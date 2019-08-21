@@ -206,6 +206,7 @@ exp(const FormalPowerSeries<T>& input)
 
 #define INSTANTIATE_TEMPLATE_SERIES(type) \
   template class FormalPowerSeries<type>; \
+  template FormalPowerSeries<type> bruteForceMultiply(const FormalPowerSeries<type>& a, const FormalPowerSeries<type>& b); \
   template FormalPowerSeries<type> derivative(const FormalPowerSeries<type>&); \
   template FormalPowerSeries<type> log(const FormalPowerSeries<type>&); \
   template FormalPowerSeries<type> reciprocal(const FormalPowerSeries<type>&); \
@@ -213,6 +214,10 @@ exp(const FormalPowerSeries<T>& input)
   template FormalPowerSeries<type> exp<type, NEWTONS_ITERATIVE_METHOD>( \
       const FormalPowerSeries<type>&);
 
-//INSTANTIATE_TEMPLATE_SERIES(Zp<int32_t>)
+INSTANTIATE_TEMPLATE_SERIES(int32_t)
+INSTANTIATE_TEMPLATE_SERIES(int64_t)
+INSTANTIATE_TEMPLATE_SERIES(__int128)
+
+INSTANTIATE_TEMPLATE_SERIES(Zp<int32_t>)
 INSTANTIATE_TEMPLATE_SERIES(Zp<int64_t>)
 INSTANTIATE_TEMPLATE_SERIES(Zp<__int128>)

@@ -14,6 +14,8 @@ template <typename T, ExponentCalculationPolicy expPolicy>
 class MainImpl : public SubsetSumImpl<T>
 {
 public:
+  MainImpl() = default;
+  explicit MainImpl(const SubsetSumImpl<T>& otherImpl);
   void solve() override;
 
 private:

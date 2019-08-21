@@ -32,12 +32,12 @@ fast_exp(const T base, const T exp, const T modulo)
   if (exp % 2 == 0)
   {
     T half = fast_exp(base, exp / 2, modulo);
-    return (half * half) % modulo;
+    return ((__int128) half * half) % modulo;
   }
   else
   {
     T half = fast_exp(base, exp / 2, modulo);
-    return ((((half * half) % modulo) * base)) % modulo;
+    return ((__int128) (((__int128) half * half) % modulo) * base) % modulo;
   }
 }
 
@@ -89,17 +89,16 @@ executeAndMeasureTime(Func f)
   return std::chrono::duration_cast<TimeRep>(end - start);
 }
 
-template <typename T>
-std::ostream&
-operator<<(std::ostream& out, const std::vector<T>& x)
+inline std::istream&
+operator>>(std::istream& in, __int128& x)
 {
-  for (auto t : x)
-    out << (long long int) t << ' ';
-  return out;
+  int64_t temp;
+  in >> temp;
+  x = temp;
+  return in;
 }
 
-template <typename T>
-std::ostream&
+inline std::ostream&
 operator<<(std::ostream& out, const __int128& x)
 {
   out << (int64_t) x;

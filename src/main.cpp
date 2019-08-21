@@ -16,37 +16,59 @@ main()
   int z;
   std::cin >> z;
 
+  const double numberOfInputs = z;
+
   std::cout << "Formal series multiplication policy " << multPolicyName[FORMAL_SERIES_MULT_POLICY]
             << '\n';
+  if constexpr(FORMAL_SERIES_MULT_POLICY == NTT && NTT_CHECK_OVERFLOW_CHECK)
+      std::cerr << "Checking NTT's overflows, may affect performance\n";
 
   std::size_t correctAnswers = 0, wrongAnswers = 0;
+  double newtonSumOfTimes = 0.0, divideAndConquerSumOfTimes = 0.0, dpSumOfTimes = 0.0;
 
   while (z--)
   {
-    SubsetSumSolver<Int> ssSolverMainAlgorithm(
+    SubsetSumSolver<Int> newtonSolver(
         std::make_unique<MainImpl<Int, ExponentCalculationPolicy::NEWTONS_ITERATIVE_METHOD>>());
 
-    std::cin >> ssSolverMainAlgorithm;
+    std::cin >> newtonSolver;
 
-    SubsetSumSolver<Int> ssSolverDpAlgorithm(
-        std::make_unique<DynamicProgrammingImpl<Int>>(ssSolverMainAlgorithm.getImpl()));
+    SubsetSumSolver<Int> divideAndConquerSolver(
+        std::make_unique<MainImpl<Int, ExponentCalculationPolicy::DIVIDE_AND_CONQUER>>(newtonSolver.getImpl()));
 
-    auto mainAlgorithmTime =
-        executeAndMeasureTime([&ssSolverMainAlgorithm] { ssSolverMainAlgorithm.solve(); });
-    auto dpAlgorithmTime =
-        executeAndMeasureTime([&ssSolverDpAlgorithm] { ssSolverDpAlgorithm.solve(); });
+    SubsetSumSolver<Int> dpSolver(
+        std::make_unique<DynamicProgrammingImpl<Int>>(newtonSolver.getImpl()));
 
-    if (OUTPUT_TIME)
+    const auto newtonsTime =
+        executeAndMeasureTime([&newtonSolver] { newtonSolver.solve(); });
+    const auto divideAndConquerTime =
+        executeAndMeasureTime([&divideAndConquerSolver] { divideAndConquerSolver.solve(); });
+    const auto dpTime =
+        executeAndMeasureTime([&dpSolver] { dpSolver.solve(); });
+
+    if constexpr (OUTPUT_TIME)
     {
-      std::cout << "Main algorithm time - " << mainAlgorithmTime.count() << " seconds, "
-                << ssSolverMainAlgorithm.result() << " result\n";
-      std::cout << "Dynamic programming algorithm time - " << dpAlgorithmTime.count()
-                << " seconds, " << ssSolverDpAlgorithm.result() << " result\n";
+      std::cout << "Dynamic programming time - " << dpTime.count()
+                << " seconds, " << dpSolver.result() << " result\n";
+      std::cout << "Divide and conquer time - " << divideAndConquerTime.count()
+                << " seconds, " << divideAndConquerSolver.result() << " result\n";
+      std::cout << "Newton's iterative method time - " << newtonsTime.count() << " seconds, "
+                << newtonSolver.result() << " result\n";
     }
 
-    (ssSolverMainAlgorithm.result() == ssSolverDpAlgorithm.result()) ? correctAnswers++
-                                                                     : wrongAnswers++;
+    dpSumOfTimes += dpTime.count();
+    divideAndConquerSumOfTimes += divideAndConquerTime.count();
+    newtonSumOfTimes += newtonsTime.count();
+
+    (newtonSolver.result() == dpSolver.result() && dpSolver.result() == divideAndConquerSolver.result()) ? correctAnswers++ : wrongAnswers++;
   }
+
+  std::cout << "Average times\n";
+  std::cout << "DP|DIV&CONQ|NEWTON\n";
+  std::cout << dpSumOfTimes / numberOfInputs <<
+      ',' << divideAndConquerSumOfTimes / numberOfInputs <<
+      ',' << newtonSumOfTimes / numberOfInputs << '\n';
+
 
   std::cout << "Correct answers " << correctAnswers << '\n';
   std::cout << "Wrong answers " << wrongAnswers << '\n';

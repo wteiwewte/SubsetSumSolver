@@ -64,9 +64,9 @@ ntt(T* tab, std::size_t size)
   for (std::size_t i = 0; i < size / 2; i++)
   {
     T t = tab[i];
-    tab[i] = (tab[i] + ((exponent * tab[i + size / 2]) % MOD<T>) ) % MOD<T>;
-    tab[i + size / 2] = (t - ((exponent * tab[i + size / 2]) % MOD<T>) +MOD<T>) % MOD<T>;
-    exponent = (exponent * w_n) % MOD<T>;
+    tab[i] = (tab[i] + (((bigger_t<T>) exponent * tab[i + size / 2]) % MOD<T>) ) % MOD<T>;
+    tab[i + size / 2] = (t - (((bigger_t<T>) exponent * tab[i + size / 2]) % MOD<T>) +MOD<T>) % MOD<T>;
+    exponent = ((bigger_t<T>) exponent * w_n) % MOD<T>;
   }
 }
 } // namespace
@@ -75,10 +75,7 @@ template <typename T>
 T
 NTTCalculator<T>::initModRootOrd()
 {
-  //bound~!
-  static_assert(sizeof(T) > sizeof(int32_t), "Too small type!");
-  //  if constexpr (std::is_same_v<std::decay_t<T>, int64_t>)
-  if constexpr (sizeof(T) == sizeof(int64_t))
+  if constexpr (sizeof(T) == sizeof(int32_t))
   {
     MOD<T> = MOD_INT;
     ROOT<T> = ROOT_INT;
@@ -98,30 +95,32 @@ template <typename T>
 FormalPowerSeries<Zp<T>>
 NTTCalculator<T>::multiply(const FormalPowerSeries<Zp<T>>& x, const FormalPowerSeries<Zp<T>>& y)
 {
-  assert(initialized && MOD<T> == Zp<T>::p);
-  FormalPowerSeries<Zp<T>> result;
+  assert(initialized && MOD<smaller_t<T>> == Zp<T>::p);
   std::size_t adjustedLength = getPowerOf2GreaterThan(x.size() + y.size());
+  std::vector<smaller_t<T>> X(adjustedLength);
+  std::vector<smaller_t<T>> Y(adjustedLength);
 
-  std::fill(std::begin(A), std::begin(A) + adjustedLength, 0);
-  std::fill(std::begin(B), std::begin(B) + adjustedLength, 0);
+  std::fill(std::begin(X), std::begin(X) + adjustedLength, 0);
+  std::fill(std::begin(Y), std::begin(Y) + adjustedLength, 0);
 
-  std::copy(x.begin(), x.end(), std::begin(A));
-  std::copy(y.begin(), y.end(), std::begin(B));
+  std::copy(x.begin(), x.end(), std::begin(X));
+  std::copy(y.begin(), y.end(), std::begin(Y));
 
-  ntt<T, NTTKind::NORMAL>(A.data(), adjustedLength);
-  ntt<T, NTTKind::NORMAL>(B.data(), adjustedLength);
+  ntt<smaller_t<T>, NTTKind::NORMAL>(X.data(), adjustedLength);
+  ntt<smaller_t<T>, NTTKind::NORMAL>(Y.data(), adjustedLength);
 
-  T inversionLength = fast_exp<T>(adjustedLength, MOD<T> - 2, MOD<T>);
+  smaller_t<T> inversionLength = fast_exp<smaller_t<T>>(adjustedLength, MOD<smaller_t<T>> - 2, MOD<smaller_t<T>>);
   for (std::size_t i = 0; i < adjustedLength; ++i)
-    A[i] = ((__int128) (((__int128) A[i] * B[i]) % MOD<T>) *inversionLength) % MOD<T>;
+    X[i] = ((T) (((T) X[i] * Y[i]) % MOD<smaller_t<T>>) *inversionLength) % MOD<smaller_t<T>>;
 
-  ntt<T, NTTKind::INVERSE>(A.data(), adjustedLength);
+  ntt<smaller_t<T>, NTTKind::INVERSE>(X.data(), adjustedLength);
 
-  result.resize(x.size() + y.size() - 1);
+  FormalPowerSeries<Zp<T>> result(x.size() + y.size() - 1);
   for (std::size_t i = 0; i < result.size(); ++i)
-    result[i] = Zp(A[i]);
+    result[i] = Zp<T>(X[i]);
   return result;
 }
+
 
 template <typename T>
 FormalPowerSeries<T>
@@ -131,40 +130,64 @@ NTTCalculator<T>::multiply(const FormalPowerSeries<T>& x, const FormalPowerSerie
   FormalPowerSeries<T> result;
   std::size_t adjustedLength = getPowerOf2GreaterThan(x.size() + y.size());
 
-  std::fill(std::begin(A), std::begin(A) + adjustedLength, 0);
-  std::fill(std::begin(B), std::begin(B) + adjustedLength, 0);
+  std::vector<T> X(adjustedLength);
+  std::vector<T> Y(adjustedLength);
 
-  std::copy(x.begin(), x.end(), std::begin(A));
-  std::copy(y.begin(), y.end(), std::begin(B));
+  std::fill(std::begin(X), std::begin(X) + adjustedLength, 0);
+  std::fill(std::begin(Y), std::begin(Y) + adjustedLength, 0);
 
-  ntt<T, NTTKind::NORMAL>(A.data(), adjustedLength);
-  ntt<T, NTTKind::NORMAL>(B.data(), adjustedLength);
+  std::copy(x.begin(), x.end(), std::begin(X));
+  std::copy(y.begin(), y.end(), std::begin(Y));
+
+  ntt<T, NTTKind::NORMAL>(X.data(), adjustedLength);
+  ntt<T, NTTKind::NORMAL>(Y.data(), adjustedLength);
 
   T inversionLength = fast_exp<T>(adjustedLength, MOD<T> - 2, MOD<T>);
   for (std::size_t i = 0; i < adjustedLength; ++i)
-    A[i] = ((((Int) A[i] * B[i]) % MOD<T>) *inversionLength) % MOD<T>;
+    X[i] = ((bigger_t<T>) (((bigger_t<T>) X[i] * Y[i]) % MOD<T>) * inversionLength) % MOD<T>;
 
-  ntt<T, NTTKind::INVERSE>(A.data(), adjustedLength);
+  ntt<T, NTTKind::INVERSE>(X.data(), adjustedLength);
 
   result.resize(x.size() + y.size() - 1);
   for (std::size_t i = 0; i < result.size(); ++i)
-    result[i] = A[i];
+    result[i] = X[i];
   return result;
 }
+
 #if have_safe_numerics == 1
+
+template <>
+struct smaller<boost::safe_numerics::safe<int32_t>> { typedef boost::safe_numerics::safe<int32_t> type; };
+
+template <>
+struct smaller<boost::safe_numerics::safe<int64_t>> { typedef boost::safe_numerics::safe<int32_t> type; };
+
+template <>
+struct smaller<boost::safe_numerics::safe<__int128>> { typedef boost::safe_numerics::safe<int64_t> type; };
+
+
+template <>
+struct bigger<boost::safe_numerics::safe<int32_t>> { typedef boost::safe_numerics::safe<int64_t> type; };
+
+template <>
+struct bigger<boost::safe_numerics::safe<int64_t>> { typedef boost::safe_numerics::safe<__int128> type; };
+
+template <>
+struct bigger<boost::safe_numerics::safe<__int128>> { typedef boost::safe_numerics::safe<__int128> type; };
+
+
 template <typename T>
 FormalPowerSeries<Zp<T>>
 NTTCalculator<T>::multiplyWithOverflowCheck(const FormalPowerSeries<Zp<T>>& x,
                                             const FormalPowerSeries<Zp<T>>& y)
 {
   using safeT = boost::safe_numerics::safe<T>;
-  FormalPowerSeries<Zp<T>> result;
-  NTTCalculator<safeT>::initModRootOrd();
+  NTTCalculator<smaller_t<safeT>>::initModRootOrd();
   assert(initialized);
   const std::size_t adjustedLength = getPowerOf2GreaterThan(x.size() + y.size());
 
-  std::vector<safeT> Asafe(adjustedLength);
-  std::vector<safeT> Bsafe(adjustedLength);
+  std::vector<smaller_t<safeT>> Asafe(adjustedLength);
+  std::vector<smaller_t<safeT>> Bsafe(adjustedLength);
 
   std::fill(std::begin(Asafe), std::end(Asafe), 0);
   std::fill(std::begin(Bsafe), std::end(Bsafe), 0);
@@ -172,19 +195,20 @@ NTTCalculator<T>::multiplyWithOverflowCheck(const FormalPowerSeries<Zp<T>>& x,
   std::copy(x.begin(), x.end(), std::begin(Asafe));
   std::copy(y.begin(), y.end(), std::begin(Bsafe));
 
-  ntt<safeT, NTTKind::NORMAL>(Asafe.data(), adjustedLength);
-  ntt<safeT, NTTKind::NORMAL>(Bsafe.data(), adjustedLength);
+  ntt<smaller_t<safeT>, NTTKind::NORMAL>(Asafe.data(), adjustedLength);
+  ntt<smaller_t<safeT>, NTTKind::NORMAL>(Bsafe.data(), adjustedLength);
 
-  auto inversionLength = fast_exp<safeT>(adjustedLength, MOD<safeT> - 2, MOD<safeT>);
+  auto inversionLength = fast_exp<smaller_t<safeT>>(adjustedLength, MOD<smaller_t<safeT>> - 2, MOD<smaller_t<safeT>>);
   for (std::size_t i = 0; i < adjustedLength; ++i)
-    Asafe[i] = (((Asafe[i] * Bsafe[i]) % MOD<safeT>) *inversionLength) % MOD<safeT>;
+    Asafe[i] = ((safeT) (((safeT) Asafe[i] * Bsafe[i]) % MOD<smaller_t<safeT>>) *inversionLength) % MOD<smaller_t<safeT>>;
 
-  ntt<safeT, NTTKind::INVERSE>(Asafe.data(), adjustedLength);
+  ntt<smaller_t<safeT>, NTTKind::INVERSE>(Asafe.data(), adjustedLength);
+  FormalPowerSeries<Zp<T>> result;
   return result;
 }
 #else
 #endif
 
-//template class NTTCalculator<int32_t>;
+template class NTTCalculator<int32_t>;
 template class NTTCalculator<int64_t>;
 template class NTTCalculator<__int128>;

@@ -30,7 +30,6 @@ public:
 protected:
   std::vector<T> _tab;
   T _target;
-  //    std::make_unsigned_t<T> _size;
   int64_t _size;
   bool _result = false;
 
